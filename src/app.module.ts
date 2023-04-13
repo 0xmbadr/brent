@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import ormConfigProd from './config/orm.config.prod';
 import ormconfig from './config/ormconfig';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import ormconfig from './config/ormconfig';
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormconfig : ormConfigProd,
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
