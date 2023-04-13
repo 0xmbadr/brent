@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dtos/register.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +14,19 @@ export class AuthService {
 
   async register({ email, password, firstname, lastname }: RegisterDto) {
     try {
-      //   TODO: Check if user already exists
-
-      // TODO: Hash the password
+      //  Check if user already exists
+      const userExists = await this.userRepo.findOne({ where: { email } });
+      if (userExists) {
+        throw new HttpException('user already exists', HttpStatus.FORBIDDEN);
+      }
+      // Hash the password
+      const salt = bcrypt.genSaltSync(8);
+      const hashedPassword = bcrypt.hashSync(password, salt);
 
       // save user to DB
       const newUser = await this.userRepo.save({
         email,
-        password,
+        password: hashedPassword,
         firstname,
         lastname,
       });
