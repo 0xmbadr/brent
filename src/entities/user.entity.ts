@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-enum UserType {
+export enum UserType {
   TENANT = 'tenant',
   LANDLORD = 'landlord',
 }
