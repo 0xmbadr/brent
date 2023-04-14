@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Apartment } from './apartment.entity';
 
 export enum UserType {
   TENANT = 'tenant',
@@ -36,6 +38,9 @@ export class User {
 
   @Column({ default: false })
   isEmailVerified: boolean;
+
+  @OneToMany(() => Apartment, (apartment) => apartment.landLord)
+  apartments: Apartment[];
 
   @CreateDateColumn()
   createdAt: Date;

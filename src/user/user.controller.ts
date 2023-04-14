@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { AuthGuardJwt } from 'src/auth/guards/auth-guard.jwt';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './user.service';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuardJwt)
 @ApiHeader({ name: 'Authorization' })
 @ApiTags('User')
 @Controller('users')

@@ -7,6 +7,7 @@ import ormConfigProd from './config/orm.config.prod';
 import ormconfig from './config/ormconfig';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ApartmentModule } from './apartment/apartment.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    ApartmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
