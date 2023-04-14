@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { RegisterDto } from './dtos/register.dto';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register({ email, password, firstname, lastname }: RegisterDto) {
@@ -34,7 +36,15 @@ export class AuthService {
 
       // return user without password
       delete newUser.password;
-      return newUser;
+
+      // generate Token
+      const payload = {
+        sub: newUser.id,
+        email: newUser.email,
+      };
+      const token = this.jwtService.sign(payload);
+
+      return { newUser, token };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -43,7 +53,7 @@ export class AuthService {
   async login({ email, password }: LoginDto) {
     try {
       // check if user exists
-      const user = await this.userRepo.findOne({ where: { email } });
+      const user: User = await this.userRepo.findOne({ where: { email } });
 
       if (!user)
         throw new HttpException(
@@ -56,12 +66,18 @@ export class AuthService {
       if (!passwordMatches)
         throw new HttpException('incorrect password', HttpStatus.FORBIDDEN);
 
-      // TODO: GENERATE TOKEN
+      // GENERATE TOKEN
+      const payload = {
+        sub: user.id,
+        email,
+      };
+
+      const token = this.jwtService.sign(payload);
 
       // Return User data with token
       delete user.password;
 
-      return { user, token: 'ToBeGenerated' };
+      return { user, token };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
