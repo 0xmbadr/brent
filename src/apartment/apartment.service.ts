@@ -1,9 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from 'src/entities/apartment.entity';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateApartmentDto } from './dtos/create-apartment.dto';
+import { UpdateApartmentDto } from './dtos/update-apartment.dto';
 
 @Injectable()
 export class ApartmentService {
@@ -107,6 +114,46 @@ export class ApartmentService {
         }
         return { message: 'apartment successfully deleted' };
       }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async updateApartment(
+    apartmentId: string,
+    user: User,
+    dto: UpdateApartmentDto,
+  ) {
+    try {
+      const apartment = await this.apartmentRepo.findOne({
+        where: { id: apartmentId },
+      });
+
+      if (!apartment) {
+        throw new NotFoundException();
+      }
+
+      if (apartment.landLordId !== user.id) {
+        throw new ForbiddenException(
+          null,
+          `You are not authorized to change this apartment`,
+        );
+      }
+
+      //update apartment
+      const updatedApartment = await this.apartmentRepo.update(
+        apartmentId,
+        dto,
+      );
+
+      if (!updatedApartment) {
+        throw new HttpException(
+          'Apartment not updated',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return { message: 'Apartment updated successfully' };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
