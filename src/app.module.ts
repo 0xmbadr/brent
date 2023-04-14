@@ -8,6 +8,7 @@ import ormconfig from './config/ormconfig';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ApartmentModule } from './apartment/apartment.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApartmentModule } from './apartment/apartment.module';
     UserModule,
     AuthModule,
     ApartmentModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

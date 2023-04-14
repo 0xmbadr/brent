@@ -9,6 +9,8 @@
 
 <!-- TODO -->
 
+[DB Design](https://dbdiagram.io/d/6439979e6b319470519ea6b9)
+
 ## Installation
 
 <!-- TODO  -->

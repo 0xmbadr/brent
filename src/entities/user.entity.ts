@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Apartment } from './apartment.entity';
+import { Review } from './review.entity';
 
 export enum UserType {
   TENANT = 'tenant',
@@ -41,6 +42,9 @@ export class User {
 
   @OneToMany(() => Apartment, (apartment) => apartment.landLord)
   apartments: Apartment[];
+
+  @OneToMany(() => Review, (review) => review.reviewer)
+  reviews: Review[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -4,8 +4,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Review } from './review.entity';
 import { User } from './user.entity';
 
 @Entity('apartments')
@@ -31,6 +33,9 @@ export class Apartment {
 
   @Column()
   landLordId: string;
+
+  @OneToMany(() => Review, (review) => review.apartment)
+  reviews: Review[];
 
   @CreateDateColumn()
   createdAt: Date;
