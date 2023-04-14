@@ -1,16 +1,17 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Apartment } from './apartment.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Unique(['reviewerId', 'apartmentId'])
+@Entity({ name: 'reviews' })
 export class Review {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -41,9 +42,6 @@ export class Review {
   @Column({ nullable: false })
   reviewerId: string;
 
-  @Index(['reviewerId', 'apartmentId'], { unique: true })
-  userApartment: [User, Apartment];
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dateCreated: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 }
