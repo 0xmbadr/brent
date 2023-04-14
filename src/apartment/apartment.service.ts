@@ -43,7 +43,9 @@ export class ApartmentService {
   async getAllApartments() {
     try {
       const apartments = await this.apartmentRepo.find();
-      if (!apartments) {
+      console.log(apartments);
+
+      if (apartments.length == 0) {
         throw new HttpException(
           'There are no apartments to show',
           HttpStatus.NO_CONTENT,
@@ -68,6 +70,43 @@ export class ApartmentService {
         );
       }
       return apartmentExists;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async removeApartment(apartmentId: string, user: User) {
+    try {
+      const apartment = await this.apartmentRepo.findOne({
+        where: { id: apartmentId },
+      });
+
+      if (!apartment) {
+        throw new HttpException(
+          'apartment does not exist',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      console.log(apartment);
+
+      if (apartment.landLordId !== user.id) {
+        throw new HttpException(
+          'you cannot delete an apartment you do not own',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      if (apartment && apartment.landLordId === user.id) {
+        const apartmentDeleted = this.apartmentRepo.delete(apartmentId);
+        if (!apartmentDeleted) {
+          throw new HttpException(
+            'apartment not deleted',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        return { message: 'apartment successfully deleted' };
+      }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

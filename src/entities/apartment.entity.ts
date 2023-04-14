@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -25,7 +26,11 @@ export class Apartment {
   isApartmentVerified: boolean;
 
   @ManyToOne(() => User, (user) => user.apartments)
+  @JoinColumn({ name: 'landLordId' })
   landLord: User;
+
+  @Column()
+  landLordId: string;
 
   @CreateDateColumn()
   createdAt: Date;

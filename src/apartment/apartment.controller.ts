@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
 import { AuthGuardJwt } from 'src/auth/guards/auth-guard.jwt';
@@ -26,5 +34,12 @@ export class ApartmentController {
   @Get(':apartmentId')
   getOne(@Param('apartmentId') apartmentId: string) {
     return this.apartmentService.getSingleApartment(apartmentId);
+  }
+
+  @UseGuards(AuthGuardJwt)
+  @ApiHeader({ name: 'Authorization' })
+  @Delete(':apartmentId')
+  remove(@Param('apartmentId') apartmentId: string, @CurrentUser() user: User) {
+    return this.apartmentService.removeApartment(apartmentId, user);
   }
 }
